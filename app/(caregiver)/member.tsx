@@ -2,7 +2,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 
-import { BackLink, Button, Card, DoseRing, Field, Screen, Text } from '../../components/ui';
+import { BackLink, Button, Card, DoseRing, FadeIn, Field, Screen, Text } from '../../components/ui';
 import {
   adherenceRate,
   doseStateLabel,
@@ -137,7 +137,7 @@ export default function MemberDetail() {
               No medications yet. Add the first one to start tracking.
             </Text>
           ) : (
-            medications.map((medication) => {
+            medications.map((medication, index) => {
               const runway = refillRunway(medication);
               const low = runwayIsLow(runway);
 
@@ -145,42 +145,43 @@ export default function MemberDetail() {
                 // Tapping the row opens tag setup, so the card does not need
                 // to carry a full-width button. Same information, half the
                 // height — a long medication list should not feel like work.
-                <Card
-                  key={medication.id}
-                  tone={low ? 'amber' : 'surface'}
-                  onPress={() =>
-                    router.push({
-                      pathname: '/(caregiver)/medication',
-                      params: { id: medication.id, memberId: id },
-                    })
-                  }
-                >
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: space[3],
-                    }}
+                <FadeIn key={medication.id} index={index}>
+                  <Card
+                    tone={low ? 'amber' : 'surface'}
+                    onPress={() =>
+                      router.push({
+                        pathname: '/(caregiver)/medication',
+                        params: { id: medication.id, memberId: id },
+                      })
+                    }
                   >
-                    <View style={{ flex: 1 }}>
-                      <Text variant="bodyStrong" numberOfLines={1}>
-                        {medication.name}
-                      </Text>
-                      <Text variant="caption" color="textSecondary" numberOfLines={1}>
-                        {[medication.dose_text, medication.times.length === 1
-                          ? 'once a day'
-                          : `${medication.times.length} times a day`]
-                          .filter(Boolean)
-                          .join(' · ')}
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: space[3],
+                      }}
+                    >
+                      <View style={{ flex: 1 }}>
+                        <Text variant="bodyStrong" numberOfLines={1}>
+                          {medication.name}
+                        </Text>
+                        <Text variant="caption" color="textSecondary" numberOfLines={1}>
+                          {[medication.dose_text, medication.times.length === 1
+                            ? 'once a day'
+                            : `${medication.times.length} times a day`]
+                            .filter(Boolean)
+                            .join(' · ')}
+                        </Text>
+                      </View>
+
+                      <Text variant="caption" color={low ? 'amber' : 'textMuted'}>
+                        {runwayLabel(runway)}
                       </Text>
                     </View>
-
-                    <Text variant="caption" color={low ? 'amber' : 'textMuted'}>
-                      {runwayLabel(runway)}
-                    </Text>
-                  </View>
-                </Card>
+                  </Card>
+                </FadeIn>
               );
             })
           )}

@@ -119,15 +119,24 @@ counts and countdowns use `fontVariant: ['tabular-nums']`.
 
 ## Motion
 
-Restrained. Three moments only:
+Calm and physical. Everything settles once on a soft spring and stops. Tokens live in
+`motion` in `lib/theme.ts`.
 
-1. **Confirmation** — the Dose Ring fills with a 320ms spring, paired with
-   `Haptics.notificationAsync(Success)`. This is the emotional beat of the entire app.
-2. **Dose row entry** — cards fade+rise 12px, staggered 40ms, on dashboard mount. Once.
-3. **Sheet** — standard slide-up.
+1. **Confirmation** — the Dose Ring pops in on a bouncy spring, the check draws itself,
+   and a single halo leaves the ring, paired with `Haptics.notificationAsync(Success)`.
+   The same arrival plays live on a caregiver's dashboard when a dose comes in. This is
+   the emotional beat of the entire app.
+2. **Row entry** — cards fade, rise 12px and settle from 97% scale, staggered 40ms, on
+   mount. Once. Rows below an added or removed row glide to their new place.
+3. **Press** — anything pressable (`Pressy`) sinks to 97% under the finger and springs
+   back. Primary buttons dim; others take on a deeper surface.
+4. **Selection and focus** — chips, cards that change tone, avatars and fields
+   cross-fade colour over 200ms. The segmented control slides one accent pill.
+5. **Navigation** — caregiver pages slide in from the right with the previous page
+   drifting behind; the resolve sheet slides up; auth steps rise in; Simple Mode fades.
 
-Nothing loops, nothing pulses, nothing shimmers. Respect `prefers-reduced-motion` by
-skipping 1 and 2 (keep the haptic).
+Nothing loops, nothing pulses, nothing shimmers. Respect reduced motion by skipping
+every movement (keep the haptic and colour cross-fades).
 
 ## Screens
 

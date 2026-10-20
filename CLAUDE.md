@@ -73,7 +73,8 @@ through `react-native-svg`).
 - `plugins/withNfcIntentFilter.js` — adds the `NDEF_DISCOVERED` intent filter.
   Android never dispatches an NFC tag via `ACTION_VIEW`, and `app.json` cannot
   express a non-`android.intent.action.*` action.
-- `components/ui/` — primitives: `Text`, `Button`, `Card`, `DoseRing`, `Screen`
+- `components/ui/` — primitives: `Text`, `Button`, `Card`, `DoseRing`, `Screen`,
+  `Pressy` (the one pressable — spring press feedback), `FadeIn` (row entry)
 - `lib/theme.ts` — design tokens. Single source of truth for colour, type, spacing.
 - `lib/doses.ts` — dose window state, adherence drift, refill runway
 - `lib/nfc.ts`, `lib/notifications.ts`, `lib/supabase.ts`

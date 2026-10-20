@@ -1,9 +1,9 @@
 import * as Haptics from 'expo-haptics';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
-import { AccessibilityInfo, Animated, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { View } from 'react-native';
 
-import { Button, DoseRing, Screen, Text } from '../../components/ui';
+import { Button, DoseRing, FadeIn, Screen, Text } from '../../components/ui';
 import { formatTime } from '../../lib/doses';
 import { enqueue } from '../../lib/queue';
 import { supabase } from '../../lib/supabase';
@@ -23,8 +23,6 @@ export default function TapConfirmation() {
   const [failed, setFailed] = useState(false);
   /** Network was down: the tap is on disk and will replay. */
   const [queued, setQueued] = useState(false);
-
-  const fill = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     let active = true;
@@ -63,20 +61,8 @@ export default function TapConfirmation() {
 
       setResult(row);
 
-      // The emotional beat of the entire app.
+      // The emotional beat of the entire app. The ring plays its own arrival.
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-
-      const reduceMotion = await AccessibilityInfo.isReduceMotionEnabled();
-      if (reduceMotion) {
-        fill.setValue(1);
-      } else {
-        Animated.spring(fill, {
-          toValue: 1,
-          useNativeDriver: true,
-          speed: 12,
-          bounciness: 6,
-        }).start();
-      }
     };
 
     void run();
@@ -84,7 +70,7 @@ export default function TapConfirmation() {
     return () => {
       active = false;
     };
-  }, [token, source, fill]);
+  }, [token, source]);
 
   // Auto-dismiss into Simple Mode, with a Done button for impatience.
   useEffect(() => {
@@ -97,13 +83,21 @@ export default function TapConfirmation() {
     return (
       <Screen background="accentSurface" center scroll={false}>
         <View style={{ gap: space[5], alignItems: 'center' }}>
-          <DoseRing state="confirmed" size={120} decorative />
-          <Text variant="title">Saved</Text>
-          <Text color="textSecondary" style={{ textAlign: 'center' }}>
-            The phone is offline, so the family will see this as soon as it is
-            back on.
-          </Text>
-          <Button label="Done" onPress={() => router.replace('/(simple)/home')} />
+          <DoseRing state="confirmed" size={120} decorative animateIn />
+          <FadeIn index={4}>
+            <Text variant="title" style={{ textAlign: 'center' }}>
+              Saved
+            </Text>
+          </FadeIn>
+          <FadeIn index={6}>
+            <Text color="textSecondary" style={{ textAlign: 'center' }}>
+              The phone is offline, so the family will see this as soon as it is
+              back on.
+            </Text>
+          </FadeIn>
+          <FadeIn index={8}>
+            <Button label="Done" onPress={() => router.replace('/(simple)/home')} />
+          </FadeIn>
         </View>
       </Screen>
     );
@@ -113,11 +107,19 @@ export default function TapConfirmation() {
     return (
       <Screen background="redSurface" center scroll={false}>
         <View style={{ gap: space[5], alignItems: 'center' }}>
-          <Text variant="title">Couldn&apos;t read that sticker</Text>
-          <Text color="textSecondary" style={{ textAlign: 'center' }}>
-            Hold the phone against it for a second longer, or log the dose yourself.
-          </Text>
-          <Button label="Log it myself" onPress={() => router.replace('/(simple)/home')} />
+          <FadeIn>
+            <Text variant="title" style={{ textAlign: 'center' }}>
+              Couldn&apos;t read that sticker
+            </Text>
+          </FadeIn>
+          <FadeIn index={2}>
+            <Text color="textSecondary" style={{ textAlign: 'center' }}>
+              Hold the phone against it for a second longer, or log the dose yourself.
+            </Text>
+          </FadeIn>
+          <FadeIn index={4}>
+            <Button label="Log it myself" onPress={() => router.replace('/(simple)/home')} />
+          </FadeIn>
         </View>
       </Screen>
     );
@@ -137,27 +139,29 @@ export default function TapConfirmation() {
   return (
     <Screen background="accentSurface" center scroll={false}>
       <View style={{ gap: space[6], alignItems: 'center' }}>
-        <Animated.View
-          style={{
-            transform: [
-              { scale: fill.interpolate({ inputRange: [0, 1], outputRange: [0.8, 1] }) },
-            ],
-            opacity: fill,
-          }}
-        >
-          <DoseRing state="confirmed" size={140} decorative />
-        </Animated.View>
+        <DoseRing state="confirmed" size={140} decorative animateIn />
 
+        {/* The words follow the ring in, one beat at a time. */}
         <View style={{ gap: space[2], alignItems: 'center' }}>
-          <Text variant="name">{result.medication_name ?? 'Dose'}</Text>
-          {when ? <Text variant="display">{formatTime(when)}</Text> : null}
-          <Text color="textSecondary">
-            {alreadyDone ? 'Already counted' : 'Taken'}
-            {result.outcome === 'extra' ? ' · outside the usual time' : ''}
-          </Text>
+          <FadeIn index={4}>
+            <Text variant="name">{result.medication_name ?? 'Dose'}</Text>
+          </FadeIn>
+          {when ? (
+            <FadeIn index={6}>
+              <Text variant="display">{formatTime(when)}</Text>
+            </FadeIn>
+          ) : null}
+          <FadeIn index={8}>
+            <Text color="textSecondary">
+              {alreadyDone ? 'Already counted' : 'Taken'}
+              {result.outcome === 'extra' ? ' · outside the usual time' : ''}
+            </Text>
+          </FadeIn>
         </View>
 
-        <Button label="Done" variant="quiet" onPress={() => router.replace('/(simple)/home')} />
+        <FadeIn index={10}>
+          <Button label="Done" variant="quiet" onPress={() => router.replace('/(simple)/home')} />
+        </FadeIn>
       </View>
     </Screen>
   );

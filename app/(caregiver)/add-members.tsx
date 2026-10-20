@@ -2,7 +2,7 @@ import { router } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { View } from 'react-native';
 
-import { Button, Card, Field, Screen, Segmented, Text } from '../../components/ui';
+import { Button, Card, FadeIn, Field, Screen, Segmented, Text } from '../../components/ui';
 import { useSession } from '../../lib/session';
 import { supabase } from '../../lib/supabase';
 import { space } from '../../lib/theme';
@@ -77,15 +77,17 @@ export default function AddMembers() {
 
         {members.length > 0 ? (
           <View style={{ gap: space[3] }}>
-            {members.map((member) => (
-              <Card key={member.id}>
-                <Text variant="name">{member.name}</Text>
-                <Text variant="caption" color="textSecondary">
-                  {member.role === 'caregiver' ? 'Caregiver' : 'Care recipient'}
-                  {member.phone ? ` · ${member.phone}` : ''}
-                  {member.user_id === null ? ' · not claimed yet' : ''}
-                </Text>
-              </Card>
+            {members.map((member, index) => (
+              <FadeIn key={member.id} index={index}>
+                <Card>
+                  <Text variant="name">{member.name}</Text>
+                  <Text variant="caption" color="textSecondary">
+                    {member.role === 'caregiver' ? 'Caregiver' : 'Care recipient'}
+                    {member.phone ? ` · ${member.phone}` : ''}
+                    {member.user_id === null ? ' · not claimed yet' : ''}
+                  </Text>
+                </Card>
+              </FadeIn>
             ))}
           </View>
         ) : null}

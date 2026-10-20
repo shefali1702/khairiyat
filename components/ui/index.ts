@@ -6,6 +6,7 @@ export { Chip } from './Chip';
 export { DoseRing } from './DoseRing';
 export { FadeIn } from './FadeIn';
 export { Icon, type IconName } from './Icon';
+export { Pressy } from './Pressy';
 export { Field } from './Field';
 export { Screen } from './Screen';
 export { Segmented } from './Segmented';

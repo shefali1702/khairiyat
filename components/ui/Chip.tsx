@@ -1,6 +1,7 @@
-import { Pressable } from 'react-native';
+import Animated from 'react-native-reanimated';
 
-import { layout, radius, space, touch, useTheme } from '../../lib/theme';
+import { layout, motion, radius, space, touch, useTheme } from '../../lib/theme';
+import { Pressy } from './Pressy';
 import { Text } from './Text';
 
 type Props = {
@@ -12,28 +13,37 @@ type Props = {
 /**
  * Time chips toggle on tap. Never open a time-picker dialog per row — that
  * friction is what makes the add-medication screen fail.
+ *
+ * Selection cross-fades rather than snapping, so a row of chips being toggled
+ * reads as one calm gesture.
  */
 export const Chip = ({ label, selected, onPress }: Props) => {
   const { color } = useTheme();
 
   return (
-    <Pressable
+    <Pressy
       accessibilityRole="button"
       accessibilityState={{ selected }}
       onPress={onPress}
-      style={{
-        minHeight: touch.min,
-        justifyContent: 'center',
-        paddingHorizontal: space[4],
-        borderRadius: radius.full,
-        borderWidth: layout.hairline,
-        backgroundColor: selected ? color.accentSurface : color.surfaceRaised,
-        borderColor: selected ? color.accent : color.border,
-      }}
+      style={{ borderRadius: radius.full }}
     >
-      <Text variant="label" color={selected ? 'accent' : 'textSecondary'}>
-        {label}
-      </Text>
-    </Pressable>
+      <Animated.View
+        style={{
+          minHeight: touch.min,
+          justifyContent: 'center',
+          paddingHorizontal: space[4],
+          borderRadius: radius.full,
+          borderWidth: layout.hairline,
+          backgroundColor: selected ? color.accentSurface : color.surfaceRaised,
+          borderColor: selected ? color.accent : color.border,
+          transitionProperty: ['backgroundColor', 'borderColor'],
+          transitionDuration: motion.colorMs,
+        }}
+      >
+        <Text variant="label" color={selected ? 'accent' : 'textSecondary'}>
+          {label}
+        </Text>
+      </Animated.View>
+    </Pressy>
   );
 };

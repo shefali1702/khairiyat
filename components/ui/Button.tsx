@@ -1,7 +1,9 @@
-import { ActivityIndicator, Pressable, View, type ViewStyle } from 'react-native';
+import { ActivityIndicator, View, type ViewStyle } from 'react-native';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
-import { radius, space, touch, useTheme, type ColorToken } from '../../lib/theme';
+import { motion, radius, space, touch, useTheme, type ColorToken } from '../../lib/theme';
 import { Icon, type IconName } from './Icon';
+import { Pressy } from './Pressy';
 import { Text } from './Text';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'quiet';
@@ -56,39 +58,55 @@ export const Button = ({
     borderRadius: radius.full,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: bg === 'transparent' ? 'transparent' : color[bg],
     alignSelf: full ? 'stretch' : 'flex-start',
-    opacity: inactive ? 0.45 : 1,
+  };
+
+  /* Primary dims under the finger; the others take on a deeper surface. A
+     quiet button rests as a fully transparent copy of the colour it fills to,
+     so the fade has no muddy midpoint on any background it sits on. */
+  const rest = bg === 'transparent' ? `${color.surfaceRaised}00` : color[bg];
+  const pressedBg: Record<ButtonVariant, string> = {
+    primary: rest,
+    secondary: color.border,
+    quiet: color.surfaceRaised,
   };
 
   return (
-    <Pressable
+    <Pressy
       accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityState={{ disabled: inactive }}
       disabled={inactive}
       onPress={onPress}
-      style={({ pressed }) => [
-        base,
-        pressed && variant !== 'primary' && { backgroundColor: color.surfaceRaised },
-        pressed && variant === 'primary' && { opacity: 0.85 },
-        style,
-      ]}
+      bg={rest}
+      pressedBg={pressedBg[variant]}
+      pressedOpacity={variant === 'primary' ? 0.85 : 1}
+      restOpacity={inactive ? 0.45 : 1}
+      style={[base, style]}
     >
       {loading ? (
-        <View style={{ height: simple ? space[7] : space[6], justifyContent: 'center' }}>
+        <Animated.View
+          key="loading"
+          entering={FadeIn.duration(motion.colorMs)}
+          exiting={FadeOut.duration(motion.pressInMs)}
+          style={{ height: simple ? space[7] : space[6], justifyContent: 'center' }}
+        >
           <ActivityIndicator color={color[foreground[variant]]} />
-        </View>
+        </Animated.View>
       ) : (
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: space[2] }}>
+        <Animated.View
+          key="label"
+          entering={FadeIn.duration(motion.colorMs)}
+          style={{ flexDirection: 'row', alignItems: 'center', gap: space[2] }}
+        >
           {icon ? (
             <Icon name={icon} size={simple ? space[6] : space[5]} color={foreground[variant]} />
           ) : null}
           <Text variant={simple ? 'simpleBody' : 'label'} color={foreground[variant]}>
             {label}
           </Text>
-        </View>
+        </Animated.View>
       )}
-    </Pressable>
+    </Pressy>
   );
 };

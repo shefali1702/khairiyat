@@ -2,8 +2,9 @@ import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { AppState, View } from 'react-native';
+import Animated, { FadeOut } from 'react-native-reanimated';
 
-import { Button, Card, DoseRing, Screen, Text } from '../../components/ui';
+import { Button, Card, DoseRing, FadeIn, Screen, Text } from '../../components/ui';
 import { doseStateLabel, formatTime, isTaken } from '../../lib/doses';
 import { ensureToday, loadFamilyToday } from '../../lib/family';
 import { listenForTags } from '../../lib/nfc';
@@ -11,7 +12,7 @@ import { enqueue, flush } from '../../lib/queue';
 import { scheduleDoseReminders } from '../../lib/notifications';
 import { useSession } from '../../lib/session';
 import { supabase } from '../../lib/supabase';
-import { space } from '../../lib/theme';
+import { motion, space } from '../../lib/theme';
 import type { DoseWindow, Medication } from '../../lib/types';
 
 const greeting = (hour: number): string => {
@@ -109,41 +110,45 @@ export default function SimpleMode() {
           </Card>
         ) : (
           <View style={{ gap: space[3] }}>
-            {windows.map((window) => {
+            {windows.map((window, index) => {
               const done = isTaken(window.state);
 
               return (
-                <Card key={window.id}>
-                  <View style={{ gap: space[4] }}>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: space[4],
-                      }}
-                    >
-                      <DoseRing state={window.state} size={64} decorative />
-                      <View style={{ flex: 1, gap: space[1] }}>
-                        <Text variant="simpleBody">
-                          {medicationName(window.medication_id)}
-                        </Text>
-                        <Text variant="simpleBody" color="textSecondary">
-                          {formatTime(window.scheduled_at)} · {doseStateLabel(window.state)}
-                        </Text>
+                <FadeIn key={window.id} index={index}>
+                  <Card tone={done ? 'accent' : 'surface'}>
+                    <View style={{ gap: space[4] }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: space[4],
+                        }}
+                      >
+                        <DoseRing state={window.state} size={64} decorative />
+                        <View style={{ flex: 1, gap: space[1] }}>
+                          <Text variant="simpleBody">
+                            {medicationName(window.medication_id)}
+                          </Text>
+                          <Text variant="simpleBody" color="textSecondary">
+                            {formatTime(window.scheduled_at)} · {doseStateLabel(window.state)}
+                          </Text>
+                        </View>
                       </View>
-                    </View>
 
-                    {!done ? (
-                      <Button
-                        label="I took this"
-                        onPress={() => void take(window)}
-                        loading={busyId === window.id}
-                        simple
-                        full
-                      />
-                    ) : null}
-                  </View>
-                </Card>
+                      {!done ? (
+                        <Animated.View exiting={FadeOut.duration(motion.colorMs)}>
+                          <Button
+                            label="I took this"
+                            onPress={() => void take(window)}
+                            loading={busyId === window.id}
+                            simple
+                            full
+                          />
+                        </Animated.View>
+                      ) : null}
+                    </View>
+                  </Card>
+                </FadeIn>
               );
             })}
           </View>

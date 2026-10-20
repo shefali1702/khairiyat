@@ -1,8 +1,8 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, TextInput, View } from 'react-native';
+import { TextInput, View } from 'react-native';
 
-import { Button, Card, Screen, Text } from '../../components/ui';
+import { Button, Card, FadeIn, Pressy, Screen, Text } from '../../components/ui';
 import { useSession } from '../../lib/session';
 import { supabase } from '../../lib/supabase';
 import { layout, radius, space, touch, typeScale, useTheme } from '../../lib/theme';
@@ -160,20 +160,21 @@ export default function JoinFamily() {
             </Text>
             <Text color="textSecondary">Which one are you?</Text>
 
-            {people.map((person) => (
-              <Pressable
-                key={person.id}
-                onPress={() => void claim(person.id)}
-                disabled={busy}
-                style={{ minHeight: touch.min }}
-              >
-                <Card>
-                  <Text variant="name">{person.name}</Text>
-                  <Text variant="caption" color="textSecondary">
-                    {person.role === 'caregiver' ? 'Caregiver' : 'Care recipient'}
-                  </Text>
-                </Card>
-              </Pressable>
+            {people.map((person, index) => (
+              <FadeIn key={person.id} index={index}>
+                <Pressy
+                  onPress={() => void claim(person.id)}
+                  disabled={busy}
+                  style={{ minHeight: touch.min }}
+                >
+                  <Card>
+                    <Text variant="name">{person.name}</Text>
+                    <Text variant="caption" color="textSecondary">
+                      {person.role === 'caregiver' ? 'Caregiver' : 'Care recipient'}
+                    </Text>
+                  </Card>
+                </Pressy>
+              </FadeIn>
             ))}
           </View>
         )}

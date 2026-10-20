@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
-import { Pressable } from 'react-native';
 
 import { space, touch } from '../../lib/theme';
+import { Pressy } from './Pressy';
 import { Text } from './Text';
 
 /**
@@ -9,14 +9,15 @@ import { Text } from './Text';
  * Simple Mode never uses it — the parent's app has no navigation at all.
  */
 export const BackLink = ({ label = 'Back' }: { label?: string }) => (
-  <Pressable
+  <Pressy
     accessibilityRole="button"
     onPress={() => router.back()}
     hitSlop={space[3]}
-    style={{ minHeight: touch.min, justifyContent: 'center' }}
+    pressedOpacity={0.6}
+    style={{ minHeight: touch.min, justifyContent: 'center', alignSelf: 'flex-start' }}
   >
     <Text variant="label" color="accent">
       ‹ {label}
     </Text>
-  </Pressable>
+  </Pressy>
 );

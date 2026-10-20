@@ -216,12 +216,32 @@ export const touch = {
   simple: 64,
 } as const;
 
-/** Restrained. Confirmation, dose row entry, sheet. Nothing loops or pulses. */
+/**
+ * Every movement settles once and stops. Nothing loops, pulses or shimmers —
+ * the parent's phone has to stay calm. All of it is skipped under reduced
+ * motion; colour cross-fades stay, since they do not move anything.
+ */
 export const motion = {
   confirmSpringMs: 320,
   rowStaggerMs: 40,
   rowRisePx: 12,
+  /** Rows grow from just under full size as they rise. */
+  rowScaleFrom: 0.97,
   confirmationDismissMs: 4000,
+  /** Anything pressable sinks slightly under the finger. */
+  pressScale: 0.97,
+  pressInMs: 90,
+  /** Selection and focus colours cross-fade rather than snap. */
+  colorMs: 200,
+  /** The check inside a filled ring draws itself after the disc lands. */
+  checkDrawMs: 280,
+  /** A single ring of light that leaves a newly filled dose ring. Once. */
+  haloMs: 700,
+  haloScaleTo: 1.55,
+  /** Soft, barely-overshooting spring shared by every settle. */
+  spring: { damping: 18, stiffness: 220, mass: 0.9 },
+  /** Bouncier — reserved for a ring filling, the one celebratory moment. */
+  confirmSpring: { damping: 11, stiffness: 180, mass: 0.8 },
 } as const;
 
 /* -------------------------------------------------------------------------- */

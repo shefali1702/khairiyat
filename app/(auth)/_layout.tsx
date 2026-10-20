@@ -10,6 +10,8 @@ export default function AuthLayout() {
       screenOptions={{
         headerShown: false,
         contentStyle: { backgroundColor: color.bg },
+        // Each step rises gently into place.
+        animation: 'fade_from_bottom',
       }}
     />
   );

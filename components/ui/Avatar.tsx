@@ -1,6 +1,6 @@
-import { View } from 'react-native';
+import Animated from 'react-native-reanimated';
 
-import { layout, radius, useTheme } from '../../lib/theme';
+import { layout, motion, radius, useTheme } from '../../lib/theme';
 import { Text } from './Text';
 
 type Props = {
@@ -22,7 +22,7 @@ export const Avatar = ({ name, size = 48, selected = false }: Props) => {
   const { color } = useTheme();
 
   return (
-    <View
+    <Animated.View
       style={{
         width: size,
         height: size,
@@ -32,11 +32,13 @@ export const Avatar = ({ name, size = 48, selected = false }: Props) => {
         backgroundColor: selected ? color.accent : color.surfaceRaised,
         borderColor: selected ? color.accent : color.border,
         borderWidth: layout.hairline,
+        transitionProperty: ['backgroundColor', 'borderColor'],
+        transitionDuration: motion.colorMs,
       }}
     >
       <Text variant="label" color={selected ? 'onAccent' : 'textSecondary'}>
         {initials(name)}
       </Text>
-    </View>
+    </Animated.View>
   );
 };

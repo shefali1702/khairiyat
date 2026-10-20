@@ -2,7 +2,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { Linking, View } from 'react-native';
 
-import { BackLink, Button, Card, Field, Screen, Text } from '../../components/ui';
+import { BackLink, Button, Card, FadeIn, Field, Screen, Text } from '../../components/ui';
 import { useSession } from '../../lib/session';
 import { supabase } from '../../lib/supabase';
 import { space } from '../../lib/theme';
@@ -198,23 +198,25 @@ export default function Emergency() {
           {caregivers.length === 0 ? (
             <Text color="textSecondary">No phone numbers saved yet.</Text>
           ) : (
-            caregivers.map((person) => (
-              <Card key={person.id}>
-                <View style={{ gap: space[3] }}>
-                  <Text variant="name">{person.name}</Text>
-                  {person.phone ? (
-                    <Button
-                      label={`Call ${person.phone}`}
-                      onPress={() => void Linking.openURL(`tel:${person.phone}`)}
-                      full
-                    />
-                  ) : (
-                    <Text variant="caption" color="textMuted">
-                      No number saved.
-                    </Text>
-                  )}
-                </View>
-              </Card>
+            caregivers.map((person, index) => (
+              <FadeIn key={person.id} index={index}>
+                <Card>
+                  <View style={{ gap: space[3] }}>
+                    <Text variant="name">{person.name}</Text>
+                    {person.phone ? (
+                      <Button
+                        label={`Call ${person.phone}`}
+                        onPress={() => void Linking.openURL(`tel:${person.phone}`)}
+                        full
+                      />
+                    ) : (
+                      <Text variant="caption" color="textMuted">
+                        No number saved.
+                      </Text>
+                    )}
+                  </View>
+                </Card>
+              </FadeIn>
             ))
           )}
         </View>

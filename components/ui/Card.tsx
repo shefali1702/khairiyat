@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react';
-import { Pressable, View, type ViewStyle } from 'react-native';
+import type { ViewStyle } from 'react-native';
+import Animated from 'react-native-reanimated';
 
-import { layout, radius, useTheme, type ColorToken } from '../../lib/theme';
+import { layout, motion, radius, useTheme, type ColorToken } from '../../lib/theme';
+import { Pressy } from './Pressy';
 
 /** Amber and red are semantic only — unconfirmed and missed. Never decorative. */
 export type CardTone = 'surface' | 'accent' | 'amber' | 'red';
@@ -25,6 +27,9 @@ type Props = {
  * No drop shadows anywhere in this app. Separation is by surface colour and a
  * 1px hairline border only — shadows are the fastest way to make a React
  * Native app look templated.
+ *
+ * A pressable card sinks under the finger and warms to the raised surface. A
+ * card that changes tone — a dose coming in — cross-fades to its new colour.
  */
 export const Card = ({ children, tone = 'surface', onPress, style }: Props) => {
   const { color } = useTheme();
@@ -39,19 +44,30 @@ export const Card = ({ children, tone = 'surface', onPress, style }: Props) => {
   };
 
   if (!onPress) {
-    return <View style={[base, style]}>{children}</View>;
+    return (
+      <Animated.View
+        style={[
+          base,
+          {
+            transitionProperty: ['backgroundColor', 'borderColor'],
+            transitionDuration: motion.colorMs * 2,
+          },
+          style,
+        ]}
+      >
+        {children}
+      </Animated.View>
+    );
   }
 
   return (
-    <Pressable
+    <Pressy
       onPress={onPress}
-      style={({ pressed }) => [
-        base,
-        pressed && { backgroundColor: color.surfaceRaised },
-        style,
-      ]}
+      bg={color[palette.bg]}
+      pressedBg={color.surfaceRaised}
+      style={[base, style]}
     >
       {children}
-    </Pressable>
+    </Pressy>
   );
 };

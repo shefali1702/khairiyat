@@ -10,6 +10,8 @@ export default function SimpleLayout() {
       screenOptions={{
         headerShown: false,
         contentStyle: { backgroundColor: color.bg },
+        // Calm, not spatial — the parent's app has nowhere to navigate to.
+        animation: 'fade',
       }}
     />
   );

@@ -1,8 +1,8 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
-import { Button, Field, Screen, Text, Wordmark } from '../../components/ui';
+import { Button, FadeIn, Field, Pressy, Screen, Text, Wordmark } from '../../components/ui';
 import { supabase } from '../../lib/supabase';
 import { space } from '../../lib/theme';
 import { friendlyError } from '../../lib/errors';
@@ -46,32 +46,36 @@ export default function SignIn() {
   return (
     <Screen center>
       <View style={{ gap: space[6], width: '100%' }}>
-        <View style={{ gap: space[4] }}>
-          <Wordmark width={190} />
-          <Text color="textSecondary">
-            Know that they are well, without having to ask.
-          </Text>
-        </View>
+        <FadeIn>
+          <View style={{ gap: space[4] }}>
+            <Wordmark width={190} />
+            <Text color="textSecondary">
+              Know that they are well, without having to ask.
+            </Text>
+          </View>
+        </FadeIn>
 
-        <View style={{ gap: space[4] }}>
-          <Field
-            label="Email"
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            autoComplete="email"
-            keyboardType="email-address"
-            placeholder="you@example.com"
-          />
-          <Field
-            label="Password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            autoCapitalize="none"
-            placeholder="At least 6 characters"
-          />
-        </View>
+        <FadeIn index={2}>
+          <View style={{ gap: space[4] }}>
+            <Field
+              label="Email"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              autoComplete="email"
+              keyboardType="email-address"
+              placeholder="you@example.com"
+            />
+            <Field
+              label="Password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              autoCapitalize="none"
+              placeholder="At least 6 characters"
+            />
+          </View>
+        </FadeIn>
 
         {error ? (
           <Text variant="caption" color="red">
@@ -87,7 +91,8 @@ export default function SignIn() {
           full
         />
 
-        <Pressable
+        <Pressy
+          pressedOpacity={0.6}
           onPress={() => {
             setMode(mode === 'signUp' ? 'signIn' : 'signUp');
             setError(null);
@@ -97,7 +102,7 @@ export default function SignIn() {
           <Text variant="label" color="accent">
             {mode === 'signUp' ? 'I already have an account' : 'Create an account'}
           </Text>
-        </Pressable>
+        </Pressy>
       </View>
     </Screen>
   );
